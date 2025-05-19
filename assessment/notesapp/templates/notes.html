@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Enter Your Notes</h1>
+
+<form action="{% url 'note' %}" method="post">
+  <label for="fname">Notes Title:</label>
+  <input type="text" id="fname" name="notes_title"><br><br>
+  <label for="lname">Notes Content:</label>
+  <input type="text" id="lname" name="notes_content" style="height: 140px;width: 140px;"><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>

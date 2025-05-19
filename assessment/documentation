@@ -1,0 +1,3 @@
+# step 1: install requirements (pip install -r requirements.txt)
+# step 2: if you want connect database hide my postgresql db and connect default sqlite3 and run the project
+# step 3: run python file (python manage.py runserver)
