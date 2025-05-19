@@ -69,7 +69,7 @@ a {
 </head>
 <body>
 
-<form method="get" action="{% url 'user' %}">
+<form method="get" action="{% url 'user' %}" id="loginForm">
   <div class="container">
     <h1>Login</h1>
     <hr>
@@ -77,11 +77,60 @@ a {
     <input type="text" placeholder="Enter Email" name="user_email" id="email" required>
 
     <label for="email"><b>Password</b></label>
-    <input type="text" placeholder="Enter Password" name="user_password" id="email" required>
+    <input type="text" placeholder="Enter Password" name="user_password" id="pass" required>
 
     <button type="submit" class="registerbtn">Submit</button>
   </div>
 </form>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();  // Prevent normal form submit
 
+  // 1. Get JWT access token from /api/token/
+  const tokenResponse = await fetch('http://127.0.0.1:8000/api/token/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username: "kamal",
+      password: "Admin@123"
+    })
+  });
+
+  const tokenData = await tokenResponse.json();
+  const accessToken = tokenData.access;
+
+  // 2. Prepare data from form fields
+  const userEmail = document.getElementById('email').value;
+  const userPassword = document.getElementById('pass').value;
+
+  // 3. Build URL with query params
+  const queryParams = new URLSearchParams({
+  user_email: userEmail,
+  user_password: userPassword
+  }).toString();
+
+  const urlWithParams = `http://127.0.0.1:8000/user/?${queryParams}`;
+
+  // 4. Send protected request to /user/ with token
+  const userResponse = await fetch(urlWithParams, {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${accessToken}`
+    // No 'Content-Type' or 'body' in GET
+    }
+  });
+  const userResult = await userResponse.json();
+  console.log("test",userResponse.ok)
+  if (userResponse.ok) {
+    window.location.href = "{% url 'renote' %}";
+  } 
+  else {
+    const errorData = await userResponse.json();
+    alert("Error: " + (errorData.detail || "Something went wrong"));
+  }
+  });
+</script>
 </body>
 </html>

@@ -4,13 +4,60 @@
 
 <h1>Enter Your Notes</h1>
 
-<form action="{% url 'note' %}" method="post">
+<form action="{% url 'note' %}" method="post" id="noteForm">
   <label for="fname">Notes Title:</label>
-  <input type="text" id="fname" name="notes_title"><br><br>
+  <input type="text" id="fname" name="notes_title" ><br><br>
   <label for="lname">Notes Content:</label>
   <input type="text" id="lname" name="notes_content" style="height: 140px;width: 140px;"><br><br>
   <input type="submit" value="Submit">
 </form>
 
+<script>
+document.getElementById('noteForm').addEventListener('submit', async function (e) {
+  e.preventDefault();  // Prevent normal form submit
+
+  // 1. Get JWT access token from /api/token/
+  const tokenResponse = await fetch('http://127.0.0.1:8000/api/token/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username: "kamal",
+      password: "Admin@123"
+    })
+  });
+
+  const tokenData = await tokenResponse.json();
+  const accessToken = tokenData.access;
+
+  // 2. Prepare data from form fields
+  const formData = {
+    notes_title: document.getElementById('fname').value,
+    notes_content: document.getElementById('lname').value,
+  };
+
+  // 3. Send protected request to /user/ with token
+  const userResponse = await fetch('http://127.0.0.1:8000/note/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`, 
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify(formData)
+  });
+
+  const userResult = await userResponse.json();
+
+  if (userResponse.ok) {
+    window.location.href ="{% url 'note_success' %}";
+  } 
+  else {
+    const errorData = await userResponse.json();
+    alert("Error: " + (errorData.detail || "Something went wrong"));
+  }
+});
+</script>
 </body>
 </html>

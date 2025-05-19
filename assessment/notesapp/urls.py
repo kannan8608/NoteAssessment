@@ -8,5 +8,7 @@ urlpatterns = [
     path("logout/", views.logout, name="logout"),
     path('user/', views.UsersDetails.as_view(),name='user'),
     path('note/', views.NotesDetails.as_view(),name='note'),
-    path('renote/', views.re_enter_notes,name='renote')
+    path('success/', views.success,name='success'),
+    path('renote/', views.re_enter_notes,name='renote'),
+    path('note_success/', views.notes_success,name='note_success')
 ]

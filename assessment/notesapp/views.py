@@ -7,26 +7,25 @@ from .models import *
 import datetime
 from django.utils import timezone
 from django.template import loader
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 
 def register(request):
-    
-    template = loader.get_template('register.html')
-    return HttpResponse(template.render())
+    return render(request, 'register.html')
 
 def login(request):
-    
-    template = loader.get_template('login.html')
-    return HttpResponse(template.render())
+    return render(request, 'login.html')
 
 def logout(request):
-    
-    template = loader.get_template('login.html')
-    return HttpResponse(template.render())
+    return render(request, 'login.html')
 
 def re_enter_notes(request):
-    
-    template = loader.get_template('notes.html')
-    return HttpResponse(template.render())
+    return render(request, 'notes.html')
+
+def success(request):
+    return render(request, 'success.html')
+def notes_success(request):
+    return render(request, 'notes_success.html')
 
 # Create your views here.
 class UsersDetails(APIView):
@@ -39,11 +38,9 @@ class UsersDetails(APIView):
             
             try:
                 user_obj = Users.objects.get(user_email=user_email,user_password=user_password)
-                template = loader.get_template('notes.html')
-                return HttpResponse(template.render())
+                return Response({"status":"success","message":"Data created successfully","data":{"user_name":user_obj.user_name,"user_mail":user_obj.user_email,"last_update":user_obj.last_update}},status=status.HTTP_200_OK)
             except:
-                template = loader.get_template('error.html')
-                return HttpResponse(template.render())
+                return Response({"status":"error","message":"Something went wrong "+str(e)},status=status.HTTP_400_BAD_REQUEST)
             
         except Exception as e:
             return Response({"status":"error","message":"Something went wrong "+str(e)},status=status.HTTP_400_BAD_REQUEST)
@@ -55,8 +52,8 @@ class UsersDetails(APIView):
             user_password=data.get('user_password')
             user_obj = Users(user_name=user_name,user_email=user_email,user_password=user_password)
             user_obj.save()
-            template = loader.get_template('success.html')
-            return HttpResponse(template.render())
+            
+            return Response({"status":"success","message":"Data created successfully","data":user_obj.id},status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"status":"error","message":"Something went wrong "+str(e)},status=status.HTTP_400_BAD_REQUEST)
     def put(self,request):
@@ -122,8 +119,8 @@ class NotesDetails(APIView):
             notes_content=data.get('notes_content')
             notes_obj = Notes(notes_title=notes_title,notes_content=notes_content)
             notes_obj.save()
-            template = loader.get_template('notes_success.html')
-            return HttpResponse(template.render())
+            return Response({"status":"success","message":"Data updated successfully","data":notes_obj.id},status=status.HTTP_200_OK)
+            
         except Exception as e:
             return Response({"status":"error","message":"Something went wrong "+str(e)},status=status.HTTP_400_BAD_REQUEST)
     def put(self,request):
@@ -158,4 +155,5 @@ class NotesDetails(APIView):
             return Response({"status":"success","message":"Data deleted successfully","data":notes_obj.id},status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"status":"error","message":"Something went wrong "+str(e)},status=status.HTTP_400_BAD_REQUEST)
+
 
