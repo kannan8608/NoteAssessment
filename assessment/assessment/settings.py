@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +25,7 @@ SECRET_KEY = 'django-insecure-s7jt0vg!psfi5^ry2hw(o+__nyo_%*$0wzjw!@qmk&2nz6k4f9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -90,13 +91,13 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
-    'default': {
+   'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'notes_database',
-        'USER':'postgres',
-        'PASSWORD':'root',
-        'HOST':'localhost',
-        'PORT':'5432'
+        'NAME': os.environ.get('POSTGRES_DB', 'notes_database'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'root'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 

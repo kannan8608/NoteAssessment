@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.template import loader
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-
+from django.contrib.auth.models import User
 def register(request):
     return render(request, 'register.html')
 
@@ -50,6 +50,10 @@ class UsersDetails(APIView):
             user_name=data.get('user_name')
             user_email=data.get('user_email')
             user_password=data.get('user_password')
+            #super user api creation
+            if not User.objects.filter(username=user_name).exists():
+                User.objects.create_user(username=user_name, password=user_password, is_active=True)
+            
             user_obj = Users(user_name=user_name,user_email=user_email,user_password=user_password)
             user_obj.save()
             
