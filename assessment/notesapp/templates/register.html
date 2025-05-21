@@ -95,54 +95,6 @@ a {
   </div>
 </form>
 
-<script>
-document.getElementById('registerForm').addEventListener('submit', async function (e) {
-  e.preventDefault();  // Prevent normal form submit
-
-  // 1. Get JWT access token from /api/token/
-  const tokenResponse = await fetch('http://127.0.0.1:8000/api/token/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      username: "kamal",
-      password: "Admin@123"
-    })
-  });
-
-  const tokenData = await tokenResponse.json();
-  const accessToken = tokenData.access;
-
-  // 2. Prepare data from form fields
-  const formData = {
-    user_name: document.getElementById('psw').value,
-    user_email: document.getElementById('email').value,
-    user_password: document.getElementById('pass').value,
-  };
-
-  // 3. Send protected request to /user/ with token
-  const userResponse = await fetch('http://127.0.0.1:8000/user/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`, 
-      'X-CSRFToken': '{{ csrf_token }}'
-    },
-    body: JSON.stringify(formData)
-  });
-
-  const userResult = await userResponse.json();
-
-  if (userResponse.ok) {
-    window.location.href ="{% url 'login' %}";
-  } 
-  else {
-    const errorData = await userResponse.json();
-    alert("Error: " + (errorData.detail || "Something went wrong"));
-  }
-});
-</script>
 
 </body>
 </html>

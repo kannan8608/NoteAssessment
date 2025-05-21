@@ -85,7 +85,10 @@ a {
 <script>
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();  // Prevent normal form submit
-
+  mail= document.getElementById('email').value,
+  password= document.getElementById('pass').value
+  const get_pass= localStorage.setItem('password',password)
+  const get_email= localStorage.setItem('mail',mail)
   // 1. Get JWT access token from /api/token/
   const tokenResponse = await fetch('http://127.0.0.1:8000/api/token/', {
     method: 'POST',
@@ -93,8 +96,8 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      username: "kamal",
-      password: "Admin@123"
+      email: document.getElementById('email').value,
+      password: document.getElementById('pass').value
     })
   });
 

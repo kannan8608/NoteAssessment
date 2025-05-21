@@ -7,8 +7,8 @@ from .models import *
 import datetime
 from django.utils import timezone
 from django.template import loader
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 def register(request):
     return render(request, 'register.html')
@@ -29,7 +29,7 @@ def notes_success(request):
 
 # Create your views here.
 class UsersDetails(APIView):
-    
+    permission_classes = [AllowAny,]
     def get(self,request):
         try:
             data=request.query_params
@@ -52,12 +52,11 @@ class UsersDetails(APIView):
             user_password=data.get('user_password')
             #super user api creation
             if not User.objects.filter(username=user_name).exists():
-                User.objects.create_user(username=user_name, password=user_password, is_active=True)
-            
+                test=User.objects.create_user(username=user_name, password=user_password,email=user_email,first_name=user_name, is_active=True)
             user_obj = Users(user_name=user_name,user_email=user_email,user_password=user_password)
             user_obj.save()
-            
-            return Response({"status":"success","message":"Data created successfully","data":user_obj.id},status=status.HTTP_200_OK)
+            return render(request, 'success.html')
+            # return Response({"status":"success","message":"Data created successfully","data":user_obj.id},status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"status":"error","message":"Something went wrong "+str(e)},status=status.HTTP_400_BAD_REQUEST)
     def put(self,request):

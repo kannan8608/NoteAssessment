@@ -23,8 +23,8 @@ document.getElementById('noteForm').addEventListener('submit', async function (e
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      username: "kamal",
-      password: "Admin@123"
+      email: localStorage.getItem('mail'),
+      password: localStorage.getItem('password')
     })
   });
 
